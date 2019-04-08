@@ -9,14 +9,12 @@ module.exports = {
     publicPath: "/",
     libraryTarget: "umd"
   },
+  devtool: process.env.NODE_ENV === "production" ? "none" : "eval-source-map",
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
     extensions: [".ts", ".tsx", ".js", ".json"]
   },
   module: {
-    rules: [
-      { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
-      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
-    ]
+    rules: [{ test: /\.tsx?$/, loader: "ts-loader" }]
   }
 }
