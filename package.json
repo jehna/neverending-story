@@ -1,0 +1,23 @@
+{
+  "name": "neverending-story",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "engines": {
+    "node": "11.x"
+  },
+  "scripts": {
+    "dev": "heroku local"
+  },
+  "dependencies": {
+    "@types/koa": "^2.0.48",
+    "@types/koa-static": "^4.0.1",
+    "koa": "^2.7.0",
+    "koa-static": "^5.0.0",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.4.2"
+  },
+  "prettier": {
+    "semi": false
+  }
+}
