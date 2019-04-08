@@ -1,8 +1,15 @@
 import React from "react"
-import { F, Atom } from "@grammarly/focal"
+import UrlLoader from "./UrlLoader"
 
-export default ({ story = Atom.create("Lorem Ipsum") }) => (
+interface StoryResult {
+  story: string
+}
+
+export default () => (
   <div>
-    <F.p>{story}</F.p>
+    <UrlLoader
+      url="/data.json"
+      onSuccess={({ story }: StoryResult) => <p>{story}</p>}
+    />
   </div>
 )
