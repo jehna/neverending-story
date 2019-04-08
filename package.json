@@ -7,15 +7,24 @@
     "node": "11.x"
   },
   "scripts": {
-    "dev": "heroku local"
+    "dev": "heroku local",
+    "heroku-postbuild": "webpack"
   },
   "dependencies": {
     "@types/koa": "^2.0.48",
     "@types/koa-static": "^4.0.1",
+    "@types/react": "^16.8.13",
+    "@types/react-dom": "^16.8.3",
+    "awesome-typescript-loader": "^5.2.1",
     "koa": "^2.7.0",
     "koa-static": "^5.0.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "source-map-loader": "^0.2.4",
     "ts-node": "^8.0.3",
-    "typescript": "^3.4.2"
+    "typescript": "^3.4.2",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
   },
   "prettier": {
     "semi": false
