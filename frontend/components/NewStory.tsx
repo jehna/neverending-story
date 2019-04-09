@@ -16,23 +16,31 @@ const From = styled.form`
   display: inline-block;
 `
 
-export default ({ newText = Atom.create('') }) => {
+export default ({ newText = Atom.create(''), lock = Atom.create(false) }) => {
   return (
-    <>
-      {' '}
-      <From
-        onSubmit={e => {
-          e.preventDefault()
-          submit(newText.get()).subscribe(() => newText.set(''))
-        }}
-      >
-        <Input
-          onChange={v => newText.set(sanitize(v.currentTarget.value))}
-          value={newText}
-          placeholder="..."
-        />
-      </From>
-    </>
+    <F.Fragment>
+      {lock.view(isLocked =>
+        isLocked ? null : (
+          <>
+            {' '}
+            <From
+              onSubmit={e => {
+                e.preventDefault()
+                lock.set(true)
+                submit(newText.get()).subscribe(() => newText.set(''))
+              }}
+            >
+              <Input
+                onChange={v => newText.set(sanitize(v.currentTarget.value))}
+                value={newText}
+                placeholder="..."
+                autoFocus
+              />
+            </From>
+          </>
+        )
+      )}
+    </F.Fragment>
   )
 }
 
