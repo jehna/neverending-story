@@ -1,8 +1,8 @@
 import React from 'react'
-import UrlLoader from './UrlLoader'
 import NewStory from './NewStory'
 import styled from 'styled-components'
 import { AppState } from '../../shared/app-state'
+import StateLoader from './StateLoader'
 
 const Heading = styled.h2`
   font-family: inherit;
@@ -20,9 +20,8 @@ const Heading = styled.h2`
 
 export default () => (
   <>
-    <UrlLoader
-      url="/api/state"
-      onLoading={() => <p>Loading...</p>}
+    <StateLoader
+      onInitialLoad={() => <p>Loading...</p>}
       onSuccess={({ story }: AppState) => (
         <>
           <Heading>Chapter 1</Heading>
