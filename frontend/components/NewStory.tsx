@@ -18,7 +18,6 @@ export default ({ newText = Atom.create('') }) => (
       onChange={v => newText.set(sanitize(v.currentTarget.value))}
       value={newText}
       placeholder="..."
-      autoFocus
     />
   </>
 )

@@ -1,7 +1,77 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Neverending Story</title>
+    <style>
+      body {
+        margin: auto;
+        font-size: 22px;
+        max-width: 38em;
+        padding: 0.5em;
+        box-sizing: border-box;
+        line-height: 1.6;
+        white-space: pre-line;
+        color: #313538;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-smooth: always;
+        font-feature-settings: 'onum' 1;
+        color: #333;
+        -moz-osx-font-smoothing: grayscale;
+        font-family: Calibri, Georgia, serif;
+        -webkit-text-size-adjust: 100%;
+      }
+      header {
+        height: 87vh;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+      }
+
+      .author {
+        display: block;
+        color: inherit;
+        font-size: 1.4em;
+        border-top: 2px #ccc groove;
+        font-weight: 100;
+        font-style: italic;
+        padding-top: 0.1em;
+      }
+
+      h1 {
+        font-size: 3em;
+        margin: 0;
+        font-weight: 600;
+        line-height: 1.1;
+      }
+
+      @media (max-width: 500px) {
+        .author {
+          font-size: 0.8em;
+        }
+
+        h1 {
+          font-size: 1.8em;
+        }
+      }
+
+      noscript {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
+  </head>
   <body>
+    <header>
+      <h1>Neverending story</h1>
+      <div class="author">By: The Internet</div>
+    </header>
     <div id="app">Loading...</div>
+    <noscript>
+      <p>
+        I'm sorry but you need to enable JavaScript for this story to work 😿
+      </p>
+    </noscript>
     <script src="/js/app.js"></script>
   </body>
 </html>
