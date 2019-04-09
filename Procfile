@@ -1,1 +1,1 @@
-web: yarn ts-node index.ts
+web: yarn ts-node backend/index.ts

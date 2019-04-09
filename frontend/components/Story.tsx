@@ -2,10 +2,7 @@ import React from 'react'
 import UrlLoader from './UrlLoader'
 import NewStory from './NewStory'
 import styled from 'styled-components'
-
-interface StoryResult {
-  story: string
-}
+import { AppState } from '../../shared/app-state'
 
 const Wrapper = styled.main`
   margin: auto;
@@ -79,8 +76,8 @@ export default () => (
       <Author>By: The Internet</Author>
     </FrontPage>
     <UrlLoader
-      url="/data.json"
-      onSuccess={({ story }: StoryResult) => (
+      url="/api/state"
+      onSuccess={({ story }: AppState) => (
         <>
           <Heading>Chapter 1</Heading>
           <span>
