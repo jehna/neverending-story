@@ -4,11 +4,11 @@ import { AppState } from '../shared/app-state'
 import { flatMap } from 'rxjs/Operators'
 import { timer } from 'rxjs/observable/timer'
 import { Round, Vote } from './round'
-const initialStory = require('./data.json')
+const INITIAL_STORY = 'Once upon a time'
 const MAX_ROUND_LENGTH_MS = process.env.NODE_ENV === 'production' ? 30000 : 5000
 
 const roundStartStore = Atom.create(Date.now())
-const storyStore = Atom.create<string>(initialStory)
+const storyStore = Atom.create<string>(INITIAL_STORY)
 const roundStore = Atom.create<Round>({ type: 'Open', votes: [] })
 
 const appState = Atom.combine<number, string, AppState>(
@@ -20,8 +20,21 @@ const appState = Atom.combine<number, string, AppState>(
   })
 )
 
+function takeRandom<T>(arr: readonly T[]) {
+  return arr[Math.floor(Math.random() * arr.length)]
+}
+
+const addWord = () => {
+  const { votes } = roundStore.get()
+  if (votes.length === 0) return
+
+  const { nextWord: winningWord } = takeRandom(votes)
+  storyStore.modify(story => story.concat(' ', winningWord))
+}
+
 const resetRound = () => {
   roundStartStore.set(Date.now())
+  addWord()
   roundStore.set({ type: 'Open', votes: [] })
 }
 const waitForRound = () => timer(MAX_ROUND_LENGTH_MS)
