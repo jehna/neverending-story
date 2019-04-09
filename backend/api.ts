@@ -1,7 +1,7 @@
 import Router from 'koa-router'
 import { Atom, Lens } from '@grammarly/focal'
 import { AppState } from '../shared/app-state'
-import { flatMap } from 'rxjs/Operators'
+import { flatMap } from 'rxjs/operators'
 import { timer } from 'rxjs/observable/timer'
 import { Round, Vote } from './round'
 const INITIAL_STORY = 'Once upon a time'
