@@ -1,11 +1,10 @@
 import Router from 'koa-router'
 import { Atom, Lens } from '@grammarly/focal'
-import { AppState } from '../shared/app-state'
+import { AppState, ROUND_TIME_MS } from '../shared/app-state'
 import { flatMap } from 'rxjs/operators'
 import { timer } from 'rxjs/observable/timer'
 import { Round, Vote } from './round'
 const INITIAL_STORY = 'Once upon a time'
-const MAX_ROUND_LENGTH_MS = process.env.NODE_ENV === 'production' ? 30000 : 5000
 
 const roundStartStore = Atom.create(Date.now())
 const storyStore = Atom.create<string>(INITIAL_STORY)
@@ -16,7 +15,7 @@ const appState = Atom.combine<number, string, AppState>(
   storyStore,
   (timer, story) => ({
     story,
-    msUntilNextRound: timer + MAX_ROUND_LENGTH_MS - Date.now()
+    msUntilNextRound: timer + ROUND_TIME_MS - Date.now()
   })
 )
 
@@ -37,7 +36,7 @@ const resetRound = () => {
   addWord()
   roundStore.set({ type: 'Open', votes: [] })
 }
-const waitForRound = () => timer(MAX_ROUND_LENGTH_MS)
+const waitForRound = () => timer(ROUND_TIME_MS)
 
 roundStartStore.pipe(flatMap(waitForRound)).subscribe(resetRound)
 

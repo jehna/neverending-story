@@ -3,6 +3,7 @@ import NewStory from './NewStory'
 import styled from 'styled-components'
 import { AppState } from '../../shared/app-state'
 import StateLoader from './StateLoader'
+import Progress from './Progress'
 
 const Heading = styled.h2`
   font-family: inherit;
@@ -22,7 +23,7 @@ export default () => (
   <>
     <StateLoader
       onInitialLoad={() => <p>Loading...</p>}
-      onSuccess={({ story }: AppState) => (
+      onSuccess={({ story, msUntilNextRound }: AppState) => (
         <>
           <Heading>Chapter 1</Heading>
           <span>
@@ -33,6 +34,7 @@ export default () => (
               </p>
             ))}
           </span>
+          <Progress time={msUntilNextRound} />
         </>
       )}
     />
