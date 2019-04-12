@@ -1,13 +1,4 @@
-interface VoteNewWord {
-  type: 'new-word'
-  nextWord: string
-}
-
-interface VoteDeleteWord {
-  type: 'delete-last-word'
-}
-
-export type Vote = VoteNewWord | VoteDeleteWord
+import { Vote } from "../shared/app-state"
 
 interface OpenRound {
   type: 'Open',

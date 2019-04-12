@@ -1,11 +1,10 @@
 import Router from 'koa-router'
 import { Atom, Lens } from '@grammarly/focal'
-import { AppState, ROUND_TIME_MS } from '../shared/app-state'
+import { AppState, ROUND_TIME_MS, Vote } from '../shared/app-state'
 import { flatMap } from 'rxjs/operators'
 import { timer } from 'rxjs/observable/timer'
-import { Round, Vote } from './round'
+import { Round } from './round'
 import knex, { Config } from 'knex'
-const INITIAL_STORY = 'Once upon a time'
 const ENV = process.env.NODE_ENV || 'development'
 const db = knex(require('../knexfile')[ENV] as Config)
 

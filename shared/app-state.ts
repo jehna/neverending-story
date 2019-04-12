@@ -5,3 +5,14 @@ export interface AppState {
   story: string
   msUntilNextRound: number
 }
+
+interface VoteNewWord {
+  type: 'new-word'
+  nextWord: string
+}
+
+interface VoteDeleteWord {
+  type: 'delete-last-word'
+}
+
+export type Vote = VoteNewWord | VoteDeleteWord

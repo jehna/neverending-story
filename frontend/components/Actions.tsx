@@ -1,9 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Atom, F } from '@grammarly/focal'
-import { voteForRemoval, voteForParagraph } from '../models/api'
+import { Vote } from '../../shared/app-state'
 
-export type StoryState = 'choose' | 'voted' | 'input-word'
+export type Action = Vote | undefined
 
 const Wrapper = styled(F.div)`
   display: flex;
@@ -89,44 +89,42 @@ const Action = styled.button`
 `
 
 interface ActionsProps {
-  state?: Atom<StoryState>
+  showWordInput?: Atom<boolean>
+  action?: Atom<Action>
   onSubmitWord?: () => void
 }
 
 export default ({
-  state = Atom.create<StoryState>('choose'),
+  showWordInput = Atom.create(true),
+  action = Atom.create<Action>(undefined),
   onSubmitWord
-}: ActionsProps) => (
-  <Wrapper>
-    {state.view(currentState => {
-      switch (currentState) {
-        case 'choose':
-          return (
-            <>
-              <Action onClick={() => state.set('input-word')}>
-                Vote for the next word
-              </Action>
-              <Action
-                onClick={() =>
-                  voteForRemoval().subscribe(() => state.set('voted'))
-                }
-              >
-                Vote for removal of the latest word
-              </Action>
-              <Action
-                onClick={() =>
-                  voteForParagraph().subscribe(() => state.set('voted'))
-                }
-              >
-                Vote for end of paragraph
-              </Action>
-            </>
-          )
-        case 'input-word':
-          return <Action onClick={onSubmitWord}>Vote</Action>
-        default:
-          return null
-      }
-    })}
-  </Wrapper>
-)
+}: ActionsProps) => {
+  const combined = Atom.combine(
+    showWordInput,
+    action,
+    (visible, currentAction) => ({ visible, actionSelected: !!currentAction })
+  )
+  return (
+    <Wrapper>
+      {combined.view(({ visible, actionSelected }) =>
+        actionSelected ? null : visible ? (
+          <Action onClick={onSubmitWord}>Vote</Action>
+        ) : (
+          <>
+            <Action onClick={() => showWordInput.set(true)}>
+              Vote for the next word
+            </Action>
+            <Action onClick={() => action.set({ type: 'delete-last-word' })}>
+              Vote for removal of the latest word
+            </Action>
+            <Action
+              onClick={() => action.set({ type: 'new-word', nextWord: '\n\n' })}
+            >
+              Vote for end of paragraph
+            </Action>
+          </>
+        )
+      )}
+    </Wrapper>
+  )
+}

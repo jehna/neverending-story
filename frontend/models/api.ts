@@ -7,8 +7,3 @@ export const voteForWord = (word: string) =>
 
 export const voteForRemoval = () =>
   fromPromise(fetch('/api/vote/', { method: 'DELETE' }))
-
-export const voteForParagraph = () =>
-  fromPromise(
-    fetch('/api/vote/' + encodeURIComponent('\n\n'), { method: 'POST' })
-  )
