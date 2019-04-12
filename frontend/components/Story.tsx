@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { AppState } from '../../shared/app-state'
 import StateLoader from './StateLoader'
 import Progress from './Progress'
+import Actions from './Actions'
 
 const Heading = styled.h2`
   font-family: inherit;
@@ -33,6 +34,7 @@ export default () => (
               </p>
             ))}
           </span>
+          <Actions />
           <Progress time={msUntilNextRound} />
         </>
       )}
