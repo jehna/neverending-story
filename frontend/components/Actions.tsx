@@ -13,6 +13,11 @@ const Wrapper = styled(F.div)`
   flex-wrap: wrap;
   max-width: 100%;
   justify-content: center;
+  align-items: center;
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+  }
 `
 
 const Action = styled.button`
@@ -33,7 +38,8 @@ const Action = styled.button`
   flex: 1;
   text-align: center;
   justify-content: center;
-  max-width: 320px;
+  max-width: 280px;
+  width: 100%;
 
   &:hover {
     transform: translateY(-2px);
