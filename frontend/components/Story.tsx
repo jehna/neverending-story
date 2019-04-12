@@ -25,7 +25,6 @@ export default () => (
       onInitialLoad={() => <p>Loading...</p>}
       onSuccess={({ story, msUntilNextRound }: AppState) => (
         <>
-          <Heading>Chapter 1</Heading>
           <span>
             {story.split('\n\n').map((t, i, stories) => (
               <p key={i}>
