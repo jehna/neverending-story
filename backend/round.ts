@@ -1,7 +1,13 @@
-export interface Vote {
-  ip: string // For catching bots
+interface VoteNewWord {
+  type: 'new-word'
   nextWord: string
 }
+
+interface VoteDeleteWord {
+  type: 'delete-last-word'
+}
+
+export type Vote = VoteNewWord | VoteDeleteWord
 
 interface OpenRound {
   type: 'Open',

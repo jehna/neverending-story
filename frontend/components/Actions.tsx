@@ -1,13 +1,18 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Atom, F } from '@grammarly/focal'
+import { voteForRemoval, voteForParagraph } from '../models/api'
 
-const Wrapper = styled.div`
+export type StoryState = 'choose' | 'voted' | 'input-word'
+
+const Wrapper = styled(F.div)`
   display: flex;
   flex-direction: row;
   margin-bottom: 1em;
   font-size: 0.9em;
   flex-wrap: wrap;
   max-width: 100%;
+  justify-content: center;
 `
 
 const Action = styled.button`
@@ -28,6 +33,7 @@ const Action = styled.button`
   flex: 1;
   text-align: center;
   justify-content: center;
+  max-width: 320px;
 
   &:hover {
     transform: translateY(-2px);
@@ -76,10 +82,45 @@ const Action = styled.button`
   }
 `
 
-export default () => (
+interface ActionsProps {
+  state?: Atom<StoryState>
+  onSubmitWord?: () => void
+}
+
+export default ({
+  state = Atom.create<StoryState>('choose'),
+  onSubmitWord
+}: ActionsProps) => (
   <Wrapper>
-    <Action>Vote for the next word</Action>
-    <Action>Vote for removal of the latest word</Action>
-    <Action>Vote for end of paragraph</Action>
+    {state.view(currentState => {
+      switch (currentState) {
+        case 'choose':
+          return (
+            <>
+              <Action onClick={() => state.set('input-word')}>
+                Vote for the next word
+              </Action>
+              <Action
+                onClick={() =>
+                  voteForRemoval().subscribe(() => state.set('voted'))
+                }
+              >
+                Vote for removal of the latest word
+              </Action>
+              <Action
+                onClick={() =>
+                  voteForParagraph().subscribe(() => state.set('voted'))
+                }
+              >
+                Vote for end of paragraph
+              </Action>
+            </>
+          )
+        case 'input-word':
+          return <Action onClick={onSubmitWord}>Vote</Action>
+        default:
+          return null
+      }
+    })}
   </Wrapper>
 )

@@ -1,43 +1,49 @@
 import React from 'react'
 import NewStory from './NewStory'
-import styled from 'styled-components'
 import { AppState } from '../../shared/app-state'
 import StateLoader from './StateLoader'
 import Progress from './Progress'
-import Actions from './Actions'
+import Actions, { StoryState } from './Actions'
+import { Atom, F } from '@grammarly/focal'
+import { voteForWord } from '../models/api'
 
-const Heading = styled.h2`
-  font-family: inherit;
-  font-size: 2em;
-  font-weight: 600;
-  color: #111;
-  border-bottom: 2px groove #ccc;
-  line-height: 1.1;
-  padding-bottom: 0.2em;
+export default ({
+  state = Atom.create<StoryState>('choose'),
+  nextWordToVote = Atom.create('')
+}) => {
+  const onSubmitWord = () =>
+    voteForWord(nextWordToVote.get()).subscribe(() => {
+      nextWordToVote.set('')
+      state.set('voted')
+    })
 
-  @media (max-width: 500px) {
-    font-size: 1.3em;
-  }
-`
-
-export default () => (
-  <>
-    <StateLoader
-      onInitialLoad={() => <p>Loading...</p>}
-      onSuccess={({ story, msUntilNextRound }: AppState) => (
-        <>
-          <span>
+  return (
+    <>
+      <StateLoader
+        onRoundStart={() => state.set('choose')}
+        onInitialLoad={() => <p>Loading...</p>}
+        onSuccess={({ story, msUntilNextRound }: AppState) => (
+          <>
             {story.split('\n\n').map((t, i, stories) => (
-              <p key={i}>
+              <F.p key={i}>
                 {t}
-                {i === stories.length - 1 && <NewStory />}
-              </p>
+                {state.view(
+                  currentState =>
+                    currentState === 'input-word' &&
+                    i === stories.length - 1 && (
+                      <NewStory
+                        onSubmit={onSubmitWord}
+                        newText={nextWordToVote}
+                      />
+                    )
+                )}
+              </F.p>
             ))}
-          </span>
-          <Actions />
-          <Progress time={msUntilNextRound} />
-        </>
-      )}
-    />
-  </>
-)
+            <Actions state={state} onSubmitWord={onSubmitWord} />
+            <Progress time={msUntilNextRound} />
+          </>
+        )}
+      />
+    </>
+  )
+}

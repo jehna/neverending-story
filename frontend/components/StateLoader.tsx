@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect } from 'react'
 import { F, Atom } from '@grammarly/focal'
 import { NetworkRequestState } from '../utils/network-request'
 import { map, flatMap } from 'rxjs/operators'
@@ -11,6 +11,7 @@ export interface AppStateLoaderProps {
   onSuccess: (value: AppState) => ReactNode
   onError?: (reason: string) => ReactNode
   onInitialLoad?: () => ReactNode
+  onRoundStart?: () => void
 }
 
 const data = Atom.create<NetworkRequestState<AppState>>({ type: 'Loading' })
@@ -30,8 +31,14 @@ data
 export default function StateLoader({
   onSuccess,
   onInitialLoad,
-  onError
+  onError,
+  onRoundStart
 }: AppStateLoaderProps) {
+  useEffect(() => {
+    const subscription = data.subscribe(onRoundStart)
+    return () => subscription.unsubscribe()
+  })
+
   return (
     <F.Fragment>
       {data.pipe(

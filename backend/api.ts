@@ -27,8 +27,13 @@ const addWord = () => {
   const { votes } = roundStore.get()
   if (votes.length === 0) return
 
-  const { nextWord: winningWord } = takeRandom(votes)
-  storyStore.modify(story => story.concat(' ', winningWord))
+  const winningVote = takeRandom(votes)
+  if (winningVote.type === 'new-word') {
+    const { nextWord: winningWord } = winningVote
+    storyStore.modify(story => story.concat(' ', winningWord))
+  } else if (winningVote.type === 'delete-last-word') {
+    storyStore.modify(story => story.slice(0, story.lastIndexOf(' ')))
+  }
 }
 
 const resetRound = () => {
@@ -64,7 +69,7 @@ router.post('/vote/:word', ctx => {
   }
 
   const votesLens = Lens.key<Round>()('votes')
-  const vote: Vote = { ip: Math.random().toFixed(10), nextWord: word }
+  const vote: Vote = { type: 'new-word', nextWord: word }
 
   // Add cote to round
   roundStore.set(votesLens.modify(votes => [...votes, vote], currentRound))
@@ -72,6 +77,17 @@ router.post('/vote/:word', ctx => {
   ctx.status = 201
 })
 
-const isValidWord = (word: string) => /^[\w-.,]+$/.test(word)
+router.delete('/vote/', ctx => {
+  const vote: Vote = { type: 'delete-last-word' }
+
+  // Add cote to round
+  const votesLens = Lens.key<Round>()('votes')
+  const currentRound = roundStore.get()
+  roundStore.set(votesLens.modify(votes => [...votes, vote], currentRound))
+
+  ctx.status = 204
+})
+
+const isValidWord = (word: string) => /^[\w-.,!?]+$|^\n\n$/.test(word)
 
 export default router
