@@ -4,11 +4,16 @@ import { AppState, ROUND_TIME_MS } from '../shared/app-state'
 import { flatMap } from 'rxjs/operators'
 import { timer } from 'rxjs/observable/timer'
 import { Round, Vote } from './round'
+import knex, { Config } from 'knex'
 const INITIAL_STORY = 'Once upon a time'
+const ENV = process.env.NODE_ENV || 'development'
+const db = knex(require('../knexfile')[ENV] as Config)
 
 const roundStartStore = Atom.create(Date.now())
-const storyStore = Atom.create<string>(INITIAL_STORY)
+const storyStore = Atom.create<string>('')
 const roundStore = Atom.create<Round>({ type: 'Open', votes: [] })
+
+db.select('word').from('words').then((words: { word: string}[]) => storyStore.set(words.map(w => w.word).join(' ')))
 
 const appState = Atom.combine<number, string, AppState>(
   roundStartStore,
@@ -23,7 +28,7 @@ function takeRandom<T>(arr: readonly T[]) {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
-const addWord = () => {
+const addWord = async () => {
   const { votes } = roundStore.get()
   if (votes.length === 0) return
 
@@ -31,8 +36,10 @@ const addWord = () => {
   if (winningVote.type === 'new-word') {
     const { nextWord: winningWord } = winningVote
     storyStore.modify(story => story.concat(' ', winningWord))
+    await db.insert({ word: winningWord }).into('words')
   } else if (winningVote.type === 'delete-last-word') {
     storyStore.modify(story => story.slice(0, story.lastIndexOf(' ')))
+    await db.delete().from('words').where('id', db('words').max('id'))
   }
 }
 
