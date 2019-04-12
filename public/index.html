@@ -4,6 +4,11 @@
     <title>Neverending Story</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
+      html,
+      body {
+        min-height: 100%;
+        height: 100%;
+      }
       body {
         margin: auto;
         font-size: 22px;
@@ -11,7 +16,6 @@
         padding: 0.5em;
         box-sizing: border-box;
         line-height: 1.6;
-        white-space: pre-line;
         color: #313538;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -21,6 +25,8 @@
         -moz-osx-font-smoothing: grayscale;
         font-family: Calibri, Georgia, serif;
         -webkit-text-size-adjust: 100%;
+        display: flex;
+        flex-direction: column;
       }
       header {
         display: flex;
@@ -40,18 +46,39 @@
         color: red;
         font-weight: bold;
       }
+
+      main {
+        flex: 1;
+        white-space: pre-line;
+      }
+
+      footer {
+        font-size: 0.7em;
+        text-align: center;
+        color: #ccc;
+        width: 100%;
+        padding: 3em 0 1em;
+      }
+
+      footer a {
+        color: inherit;
+      }
     </style>
   </head>
   <body>
     <header>
       <h1>Continue the story:</h1>
     </header>
-    <div id="app">Loading...</div>
+    <main id="app">Loading...</main>
     <noscript>
       <p>
         I'm sorry but you need to enable JavaScript for this story to work 😿
       </p>
     </noscript>
+    <footer>
+      Any feedback? Ping me at Twitter
+      <a href="https://twitter.com/luotojesse">@luotojesse</a>
+    </footer>
     <script src="/js/app.js"></script>
   </body>
 </html>
