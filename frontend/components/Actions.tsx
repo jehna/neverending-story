@@ -3,7 +3,11 @@ import styled from 'styled-components'
 import { Atom, F } from '@grammarly/focal'
 import { Vote } from '../../shared/app-state'
 
-export type Action = Vote | undefined
+interface NoAction {
+  type: 'none'
+}
+
+export type Action = Vote | NoAction
 
 const Wrapper = styled(F.div)`
   display: flex;
@@ -96,13 +100,16 @@ interface ActionsProps {
 
 export default ({
   showWordInput = Atom.create(true),
-  action = Atom.create<Action>(undefined),
+  action = Atom.create<Action>({ type: 'none' }),
   onSubmitWord
 }: ActionsProps) => {
   const combined = Atom.combine(
     showWordInput,
     action,
-    (visible, currentAction) => ({ visible, actionSelected: !!currentAction })
+    (visible, currentAction) => ({
+      visible,
+      actionSelected: currentAction.type !== 'none'
+    })
   )
   return (
     <Wrapper>

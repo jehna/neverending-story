@@ -1,12 +1,7 @@
-import React, { useEffect } from 'react'
-import NewStory from './NewStory'
-import { AppState } from '../../shared/app-state'
-import StateLoader from './StateLoader'
-import Progress from './Progress'
-import Actions, { Action } from './Actions'
-import { Atom, F } from '@grammarly/focal'
+import React from 'react'
+import { lift } from '@grammarly/focal'
 import styled from 'styled-components'
-import { voteForWord, voteForRemoval } from '../models/api'
+import { Action } from './Actions'
 
 const NewWord = styled.span`
   color: green;
@@ -16,84 +11,64 @@ const DeleteWord = styled.span`
   color: red;
 `
 
-export default ({
-  showWordInput = Atom.create(false),
-  action = Atom.create<Action>(undefined),
-  nextWordToVote = Atom.create('')
-}) => {
-  const onSubmitWord = () =>
-    action.set({ type: 'new-word', nextWord: nextWordToVote.get() })
+const Paragraph: React.SFC<{
+  paragraph: string
+  isLast: boolean
+  action: Action
+  additionalWord: JSX.Element
+}> = ({ paragraph, isLast, action, additionalWord }) => {
+  if (!isLast) {
+    return <p>{paragraph}</p>
+  }
 
-  useEffect(() => {
-    const subscription = action.subscribe(currentAction => {
-      nextWordToVote.set('')
-      showWordInput.set(false)
-      performAction(currentAction)
-    })
-    return () => subscription.unsubscribe()
-  })
+  switch (action.type) {
+    case 'none':
+      return (
+        <p>
+          {paragraph} {additionalWord}
+        </p>
+      )
+    case 'new-word':
+      return (
+        <p>
+          {paragraph} <NewWord>{formatWord(action.nextWord)}</NewWord>
+        </p>
+      )
+    case 'delete-last-word': {
+      const lastWord = paragraph.slice(paragraph.lastIndexOf(' '))
+      const otherWords = paragraph.slice(0, paragraph.lastIndexOf(' '))
+      return (
+        <p>
+          {otherWords}
+          <DeleteWord>{formatWord(lastWord)}</DeleteWord>
+        </p>
+      )
+    }
+  }
+}
 
+interface StoryProps {
+  story: string
+  action: Action
+  additionalWord: JSX.Element
+}
+
+const Story: React.SFC<StoryProps> = ({ story, action, additionalWord }) => {
   return (
     <>
-      <StateLoader
-        onRoundStart={() => action.set(undefined)}
-        onInitialLoad={() => <p>Loading...</p>}
-        onSuccess={({ story, msUntilNextRound }: AppState) => (
-          <>
-            {story.split('\n\n').map((t, i, stories) => (
-              <F.p key={i}>
-                {action.view(currentAction =>
-                  !currentAction || i < stories.length - 1 ? (
-                    t
-                  ) : currentAction.type === 'new-word' ? (
-                    <>
-                      {t}{' '}
-                      <NewWord>
-                        {currentAction.nextWord === '\n\n'
-                          ? '¶'
-                          : currentAction.nextWord}
-                      </NewWord>
-                    </>
-                  ) : (
-                    <>
-                      {t.slice(0, t.lastIndexOf(' '))}
-                      <DeleteWord>{t.slice(t.lastIndexOf(' '))}</DeleteWord>
-                    </>
-                  )
-                )}
-                {showWordInput.view(
-                  visible =>
-                    visible &&
-                    i === stories.length - 1 && (
-                      <NewStory
-                        onSubmit={onSubmitWord}
-                        newText={nextWordToVote}
-                      />
-                    )
-                )}
-                &nbsp;
-              </F.p>
-            ))}
-            <Actions
-              showWordInput={showWordInput}
-              onSubmitWord={onSubmitWord}
-              action={action}
-            />
-            <Progress time={msUntilNextRound} />
-          </>
-        )}
-      />
+      {story.split(/\n\n(?!$)/).map((paragraph, i, stories) => (
+        <Paragraph
+          key={i}
+          isLast={i === stories.length - 1}
+          paragraph={paragraph}
+          action={action}
+          additionalWord={additionalWord}
+        />
+      ))}
     </>
   )
 }
 
-const performAction = (action: Action) => {
-  if (!action) return
+const formatWord = (word: string) => (word.trim() === '' ? ' ¶' : word)
 
-  switch (action.type) {
-    case 'new-word':
-      return voteForWord(action.nextWord)
-    case 'delete-last-word':
-      return voteForRemoval()
-  }
-}
+export default lift(Story)
